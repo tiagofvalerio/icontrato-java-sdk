@@ -5,13 +5,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DocumentPackage implements Serializable {
+public class DocumentBuilder implements Serializable {
 
     private static final long serialVersionUID = -255202990752668996L;
-
-    private String userName;
-
-    private String password;
 
     private Document document;
 
@@ -19,17 +15,9 @@ public class DocumentPackage implements Serializable {
 
     private List<Step> steps;
 
-    public DocumentPackage() {
+    public DocumentBuilder() {
         this.tags = new ArrayList<String>();
         this.steps = new ArrayList<Step>();
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public String getPassword() {
-        return password;
     }
 
     public Document getDocument() {
@@ -44,28 +32,18 @@ public class DocumentPackage implements Serializable {
         return steps;
     }
 
-    public DocumentPackage withUserName(String userName) {
-        this.userName = userName;
-        return this;
-    }
-
-    public DocumentPackage withPassword(String password) {
-        this.password = password;
-        return this;
-    }
-
-    public DocumentPackage withDocument(String emailOwner, String fileName,
+    public DocumentBuilder withDocument(String fileName,
             InputStream documentStream) {
-        this.document = new Document(emailOwner, fileName, documentStream);
+        this.document = new Document(fileName, documentStream);
         return this;
     }
 
-    public DocumentPackage withTag(String tag) {
+    public DocumentBuilder withTag(String tag) {
         getTags().add(tag);
         return this;
     }
 
-    public DocumentPackage withStep(String cpf, String name, String email,
+    public DocumentBuilder withStep(String cpf, String name, String email,
             String description, ActionType action, String role) {
         Step step = new Step().withAction(action).withCpf(cpf)
                 .withDescription(description).withEmail(email).withNome(name)

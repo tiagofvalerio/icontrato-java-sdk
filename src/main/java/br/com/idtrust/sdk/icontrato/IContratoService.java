@@ -5,7 +5,7 @@ import java.io.Serializable;
 import javax.ws.rs.core.Response;
 
 import br.com.idtrust.sdk.icontrato.exception.SDKException;
-import br.com.idtrust.sdk.icontrato.model.DocumentPackage;
+import br.com.idtrust.sdk.icontrato.model.DocumentBuilder;
 import br.com.idtrust.sdk.icontrato.model.assembler.DocumentAssembler;
 import br.com.idtrust.sdk.icontrato.model.assembler.WorkflowAssembler;
 import br.com.idtrust.sdk.icontrato.ws.client.RestClient;
@@ -18,51 +18,53 @@ public class IContratoService implements Service, Serializable {
 
     private static final long serialVersionUID = -3080982999790284615L;
 
+    private String username;
+
+    private String password;
+
     private RestClient restClient = new RestClient();
 
     private LoginResponse loginResponse;
 
     private DocumentUploadResponse documentUploadResponse;
 
+    public IContratoService(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
     @Override
-    public void SendDocument(DocumentPackage documentPackage)
+    public void SendDocument(DocumentBuilder documentBuilder)
             throws SDKException {
         System.out.println(
                 "Iniciando processo de envio de documento pelo SDK Java.");
 
-        validateDocumentPackage(documentPackage);
+        validateDocumentPackage(documentBuilder);
 
-        authenticate(documentPackage.getUserName(),
-                documentPackage.getPassword());
+        authenticate(username, password);
 
         DocumentDTO documentDTO = new DocumentAssembler()
-                .assembly(documentPackage.getDocument());
+                .assembly(documentBuilder.getDocument());
 
         sendDocument(documentDTO);
 
         WorkflowDTO workflowDTO = new WorkflowAssembler()
-                .assembly(documentPackage.getSteps());
+                .assembly(documentBuilder.getSteps());
         sendWorkflow(workflowDTO);
 
     }
 
-    private void validateDocumentPackage(DocumentPackage documentPackage)
+    private void validateDocumentPackage(DocumentBuilder documentBuilder)
             throws SDKException {
 
-        System.out.println("Iniciando validação de DocumentPackage");
+        System.out.println("Iniciando validação de documentBuilder");
 
-        if (documentPackage.getUserName().isEmpty()
-                || documentPackage.getPassword().isEmpty()) {
-            throw new SDKException(
-                    "ERRO: Username ou password não informados.");
-        }
-
-        if (documentPackage.getDocument() == null
-                || documentPackage.getDocument().getDocumentStream() == null) {
+        if (documentBuilder.getDocument() == null
+                || documentBuilder.getDocument().getDocumentStream() == null) {
             throw new SDKException("ERRO: Documento não informado.");
         }
 
-        if (documentPackage.getSteps().isEmpty()) {
+        if (documentBuilder.getSteps().isEmpty()) {
             throw new SDKException("ERRO: Partes não foram informadas.");
         }
 
@@ -71,12 +73,14 @@ public class IContratoService implements Service, Serializable {
 
     private void authenticate(String username, String password)
             throws SDKException {
+
         System.out.println("Efetuando autenticação...");
 
         Response response = restClient.authenticate(username, password);
 
         if (Response.Status.OK.getStatusCode() != response.getStatus()) {
-            throw new SDKException("Login não autorizado");
+            throw new SDKException("Login não autorizado: "
+                    + response.readEntity(String.class));
         }
 
         loginResponse = response.readEntity(LoginResponse.class);
@@ -93,7 +97,9 @@ public class IContratoService implements Service, Serializable {
                 loginResponse.getAuthctoken());
 
         if (Response.Status.OK.getStatusCode() != response.getStatus()) {
-            throw new SDKException("Erro ao enviar documento para iContrato.");
+            throw new SDKException("Erro ao enviar documento para iContrato: "
+                    + response.readEntity(String.class));
+
         }
 
         documentUploadResponse = response
@@ -111,7 +117,8 @@ public class IContratoService implements Service, Serializable {
                 loginResponse.getAuthctoken(), documentUploadResponse.getId());
 
         if (Response.Status.OK.getStatusCode() != response.getStatus()) {
-            throw new SDKException("Erro ao enviar workflow para iContrato.");
+            throw new SDKException("Erro ao enviar workflow para iContrato: "
+                    + response.readEntity(String.class));
         }
 
         System.out.println("Workflow enviado com sucesso.");
