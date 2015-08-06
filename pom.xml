@@ -112,10 +112,5 @@
 			<artifactId>resteasy-jackson-provider</artifactId>
 			<version>3.0.10.Final</version>
 		</dependency>
-		<dependency>
-			<groupId>javax.enterprise</groupId>
-			<artifactId>cdi-api</artifactId>
-			<version>1.2</version>
-		</dependency>
 	</dependencies>
 </project>

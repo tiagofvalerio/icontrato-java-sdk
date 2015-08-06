@@ -2,7 +2,6 @@ package br.com.idtrust.sdk.icontrato.model.assembler;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Base64;
 
 import br.com.idtrust.sdk.icontrato.model.Document;
 import br.com.idtrust.sdk.icontrato.ws.client.dto.DocumentDTO;
@@ -15,15 +14,13 @@ public class DocumentAssembler implements Assembler<Document, DocumentDTO> {
         try {
             DocumentDTO documentDTO = new DocumentDTO();
 
-            // documentDTO.setEmailOwner(document.getEmailOwner());
             documentDTO.setFileName(document.getFileName());
 
             documentDTO.setDocumentBytes(
                     new byte[document.getDocumentStream().available()]);
 
             document.getDocumentStream().read(documentDTO.getDocumentBytes());
-            documentDTO.setDocumentBytes(
-                    Base64.getEncoder().encode(documentDTO.getDocumentBytes()));
+            documentDTO.setDocumentBytes(documentDTO.getDocumentBytes());
             documentDTO.setDocumentType(DocumentDTO.DocumentType.PDF);
 
             return documentDTO;
@@ -37,7 +34,6 @@ public class DocumentAssembler implements Assembler<Document, DocumentDTO> {
         Document document = new Document()
                 .withDocumentStream(new ByteArrayInputStream(
                         documentDTO.getDocumentBytes()))
-                // .withEmailOwner(documentDTO.getEmailOwner())
                 .withfileName(documentDTO.getFileName());
 
         return document;

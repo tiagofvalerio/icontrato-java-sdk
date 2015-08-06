@@ -13,8 +13,6 @@ public class DocumentDTO implements Serializable {
 
     private String id;
 
-    // private String owner;
-
     private String fileName;
 
     private DocumentType documentType = DocumentType.PDF;
@@ -38,14 +36,6 @@ public class DocumentDTO implements Serializable {
     public void setId(String id) {
         this.id = id;
     }
-
-    // public String getEmailOwner() {
-    // return owner;
-    // }
-    //
-    // public void setEmailOwner(String owner) {
-    // this.owner = owner;
-    // }
 
     public String getFileName() {
         return fileName;
