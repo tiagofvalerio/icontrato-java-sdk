@@ -1,4 +1,5 @@
 #Como integrar o icontrato-java-sdk com sua aplicação:
+[![Build Status](https://travis-ci.org/idtrust/icontrato-java-sdk.svg)](https://travis-ci.org/idtrust/icontrato-java-sdk)
 ======
 
 Para integrar o iContrato em sua aplicação e enviar documentos para assinatura ou aprovação, basta implementar as chamadas necessárias como no exemplo abaixo, inserindo as informações reais nos campos iniciados com #.
