@@ -40,7 +40,6 @@ public class RestClient implements Serializable {
         return target.request().header("Authorization", "Token " + token).post(
                 Entity.entity(documentDTO, MediaType.APPLICATION_JSON),
                 Response.class);
-
     }
 
     public Response sendWorkflow(WorkflowDTO workflowDTO, String token,
